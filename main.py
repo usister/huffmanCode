@@ -1,3 +1,4 @@
+import sys
 import chardet
 from bitarray import bitarray
 
@@ -115,7 +116,39 @@ with open("abc.bat", "rb") as file:
     print(type(a))
     # a = bytes()
     # a.decode()
-    print(bin(int(a.hex(), 16))[2])
+    print(type(bin(int(a.hex(), 16))))
 
-if __name__ == '__main__':
+print(sys.argv)
+
+if not (__name__ == '__main__'):
+    quit('-1')
+
+if sys.argv[1] == '-c':             #压缩文件
+    try:
+        fileName = sys.argv[2]
+        frequencyDict = analysis(fileName)
+        codeDict = getHuffmanEncode(frequencyDict)
+
+
+        #创建新文件
+        newFile = open(fileName + "-comprised", "wb")
+        newFile.write(frequencyDict)                #写入字典
+
+        # 获取文件编码
+        with open(fileName, "rb") as fileObj:
+            line = fileObj.readline()
+        #打开原文件
+        with open(fileName, "r", encoding=chardet.detect(line)['encoding']) as fileObj:
+            while True:
+                chr = fileObj.read(1)
+                if not chr: break
+                code = bitarray(8)      #一个字节一个字节写入
+
+
+    except Exception as e:
+        print(e)
     pass
+elif sys.argv[1] == '-x':
+    pass
+else:
+    print("Error please using \"huffmanCode -c filename\" to comprise a txt file, or using\"huffmanCode -x filename\" to uncomprise a comprised file")
